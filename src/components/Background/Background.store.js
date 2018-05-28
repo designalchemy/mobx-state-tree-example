@@ -40,8 +40,8 @@ const UsersStore = types
     updateSearchText(string) {
       self.inputText = string
     },
-    remove(location) {
-      destroy(location)
+    remove(user) {
+      destroy(user)
     },
     fetchProjects: flow(function* fetchProjects() {
       self.users = []
