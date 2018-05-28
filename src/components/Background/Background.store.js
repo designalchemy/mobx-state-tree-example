@@ -1,4 +1,4 @@
-import { types, destroy } from 'mobx-state-tree'
+import { types, destroy, flow } from 'mobx-state-tree'
 
 const User = types
   .model('User', {
@@ -20,8 +20,11 @@ const UsersStore = types
     inputText: types.string
   })
   .views(self => ({
-    get filterByName() {
-      return self.users.filter(item => item.id > 5)
+    filterByName() {
+      return self.users.filter(item => item.checked)
+    },
+    allUsers() {
+      return self.users
     }
   }))
   .actions(self => ({
@@ -34,41 +37,25 @@ const UsersStore = types
       self.users = []
       self.fetchProjectsSuccess(filter)
     },
-    addLocation() {
-      self.users.push({ title: self.inputText, author: 'testFace' })
-    },
     updateSearchText(string) {
       self.inputText = string
     },
     remove(location) {
       destroy(location)
     },
-    fetchProjects() {
+    fetchProjects: flow(function* fetchProjects() {
       self.users = []
       self.state = 'pending'
-      fetch('https://api.github.com/users')
-        .then(json => json.json())
-        .then(data => {
-          self.fetchProjectsSuccess(data)
-        })
-        .catch(err => {
-          self.fetchProjectsError(err)
-        })
-    },
-    fetchProjectsSuccess(projects) {
-      self.state = 'done'
-      projects.forEach(item => {
-        self.users.push({
-          avatar_url: item.avatar_url,
-          id: item.id + Math.random(),
-          login: item.login
-        })
-      })
-    },
-    fetchProjectsError(error) {
-      console.error('Failed to fetch projects', error)
-      self.state = 'error'
-    }
+      try {
+        const data = yield fetch('https://api.github.com/users')
+        const json = yield data.json()
+        self.users = json
+        self.state = 'done'
+      } catch (error) {
+        console.error('Failed to fetch projects', error)
+        self.state = 'error'
+      }
+    })
   }))
   .create({
     users: [],
@@ -76,6 +63,8 @@ const UsersStore = types
     inputText: ''
   })
 
-UsersStore.fetchProjects()
+UsersStore.fetchProjects().then(() => {
+  console.log('done')
+})
 
 export default UsersStore

@@ -6,7 +6,13 @@ import { observer } from 'mobx-react'
 import BackgroundStore from './Background.store.js'
 import styles from './Background.styles.js'
 
-const { remove, updateSearchText, users, filterPeople } = BackgroundStore
+const {
+  remove,
+  updateSearchText,
+  allUsers,
+  filterPeople,
+  filterByName
+} = BackgroundStore
 
 const Background = ({ classes }) => (
   <div className={classes.container}>
@@ -21,19 +27,30 @@ const Background = ({ classes }) => (
       </div>
     </div>
 
-    {users.map(item => (
-      <span key={item.id}>
-        <p style={{ marginBottom: '10px' }}>{item.login}</p>
-        <img
-          src={item.avatar_url}
-          style={{ width: '100px', height: '100px' }}
-          onClick={item.toggleCheck}
-        />
-        <p>Checked Status: {item.checked ? 'Checked' : 'Not Checked'}</p>
-        <div onClick={() => remove(item)}>Remove</div>
-        <br />
+    <div style={{ display: 'flex' }}>
+      <span>
+        {allUsers().map(item => (
+          <span key={item.id}>
+            <p style={{ marginBottom: '10px' }}>{item.login}</p>
+            <img
+              src={item.avatar_url}
+              style={{ width: '100px', height: '100px' }}
+              onClick={item.toggleCheck}
+            />
+            <p>Checked Status: {item.checked ? 'Checked' : 'Not Checked'}</p>
+            <div onClick={() => remove(item)}>Remove</div>
+            <br />
+          </span>
+        ))}
       </span>
-    ))}
+      <span>
+        Checked Users
+        {filterByName().map(item => {
+          // console.log(item)
+          return <p key={item.id}>{item.login}</p>
+        })}
+      </span>
+    </div>
   </div>
 )
 

@@ -3,7 +3,7 @@ import React from 'react'
 import { BrowserRouter, Switch, Route } from 'react-router-dom'
 import { ThemeProvider } from 'react-jss'
 import { Provider } from 'mobx-react'
-
+import 'setimmediate'
 import Container from 'components/Container/Container'
 import Background from 'components/Background/Background'
 
