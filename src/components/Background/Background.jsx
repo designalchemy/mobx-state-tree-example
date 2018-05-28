@@ -17,7 +17,7 @@ const Background = ({ classes }) => (
         onChange={e => updateSearchText(e.target.value)}
       />
       <div className={classes.searchButton} onClick={filterPeople}>
-        Search Location
+        Filter Users
       </div>
     </div>
 
