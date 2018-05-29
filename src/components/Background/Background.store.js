@@ -1,4 +1,5 @@
 import { types, destroy, flow } from 'mobx-state-tree'
+import makeInspectable from 'mobx-devtools-mst'
 
 const User = types
   .model('User', {
@@ -34,8 +35,7 @@ const UsersStore = types
           self.users.filter(item => item.login.includes(self.inputText))
         )
       )
-      self.users = []
-      self.fetchProjectsSuccess(filter)
+      self.users = filter
     },
     updateSearchText(string) {
       self.inputText = string
@@ -66,5 +66,7 @@ const UsersStore = types
 UsersStore.fetchProjects().then(() => {
   console.log('done')
 })
+
+makeInspectable(UsersStore)
 
 export default UsersStore
